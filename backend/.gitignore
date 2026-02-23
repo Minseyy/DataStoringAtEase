@@ -1,10 +1,12 @@
-node_modules
-# Keep environment variables out of version control
-.env
+# Node modules
+node_modules/
 
+# Environment variables
+.env
+.env.local
+
+# Prisma generated client
 /src/generated/prisma
 
-.env.local
-node_modules/
+# Python cache
 __pycache__/
-schema.prisma
