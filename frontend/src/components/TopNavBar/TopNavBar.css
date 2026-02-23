@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar-item {
+    display: inline-block;
+
+    margin: 0 1em;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
