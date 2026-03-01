@@ -5,13 +5,25 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") 
+}
+
+enum SheetType {
+  excel
+  google
 }
 
 model User {
   id        Int      @id @default(autoincrement())
+  username  String   @unique
   email     String   @unique
+  password  String
   createdAt DateTime @default(now())
+
+  googleAccessToken  String?
+  googleRefreshToken String?
+  googleExpiryDate   BigInt?
+
+  sheets Sheet []
 }
 
 model Form {
@@ -19,6 +31,7 @@ model Form {
   title     String
   schema    Json
   createdAt DateTime @default(now())
+  submissions Submission[]
 }
 
 model Submission {
@@ -27,4 +40,29 @@ model Submission {
   formId    String
   form      Form     @relation(fields: [formId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model Sheet {
+  id         Int       @id @default(autoincrement())
+  sheetName  String
+  sourceType SheetType // 'excel' | 'google
+  sourceRef  String?   // Google Sheet ID (only required for google type)
+
+  userId     Int       // tells us which user owns this sheet
+  user       User      @relation(fields: [userId], references: [id])
+
+  lastSyncedAt    DateTime?
+  createdAt  DateTime  @default(now())
+
+  rows       Row[]     // relation
+}
+
+model Row {
+  id        Int      @id @default(autoincrement())
+  sheet     Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  sheetId   Int
+  rowIndex  Int 
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
